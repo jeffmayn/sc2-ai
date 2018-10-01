@@ -6,7 +6,16 @@ from sc2.player import Human
 
 class terranAI(sc2.BotAI):
     async def on_step(self, iteration):
+        # declare command center cc as first one build
+        cc = self.units(COMMANDCENTER)
+        cc = cc.first
+
+        # get SCVs to start gathering minerals
         await self.distribute_workers()
+
+        # train SCVs
+        if self.can_afford(SCV) and self.workers.amount < 22 and cc.noqueue:
+            await self.do(cc.train(SCV))
 
 def main():
     sc2.run_game(sc2.maps.get("AcidPlantLE"),
